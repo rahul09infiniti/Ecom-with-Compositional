@@ -1,195 +1,28 @@
 <template>
+  
     <div id="productDetails">
-        <header class="sticky-header">
-            <!-- Jumbotron -->
-            <div class="p-3 text-center bg-white border-bottom" :class="{'background-fade': myCartVisible}">
-              <div class="container ">
-                <div class="row gy-3 align-items-center">
-                  <!-- Left elements -->
-                  <div class="col-lg-2 col-sm-4 col-4 d-flex justify-content-center align-items-center">
-                    <img src="/assets/image/logo-colored.svg" alt="Bizvibe-logo" class="img-fluid" style="max-width: 150px; height: auto;">
-                  </div>
-                  <!-- Left elements -->
-                  <div class="col-lg-4 col-md-12 col-12 position-relative">
-                    <div class="input-group mx-auto" style="max-width: 500px; margin-right: 50px;">
-                      <div class="form-outline">
-                        <input type="search" id="form1" class="form-control" @input="searchInputProduct" v-model="enteredProductTitle" placeholder="Search"/>
-                        <!-- <label class="form-label" for="form1">Search</label> -->
-                      </div>
-                      <button  @click="getProduct" type="button" class="btn btn-secondary" style="background-color: #033143;">
-                        <i class="fa fa-search color-white"></i>
-                      </button>
-                    </div>
+      <header class="sticky-header">
+        
 
-                    <div class="suggestion-list  rounded mb-50 d-flex justify-content-center">
-                      <ul class="list-group text-start" style="overflow-y:auto">
-                        <li v-for="suggestion in InputSuggestionProduct" :key="suggestion.id" @click="selectSuggestion(suggestion)" 
-                        class="list-group-item list-group-item-action "  style="width: 250px;">
-                          {{ suggestion.title }}
-                        </li>
-                      </ul>
-                    </div>
-                    
-                  </div>
-                  
+          <page-header>
+          </page-header>
           
-                  <!-- Center elements -->
-                  <div class="order-lg-last col-lg-6 col-sm-8 col-8 d-flex justify-content-end">
-                    <div class="d-flex align-items-center">
-                      <div class="d-flex justify-content-center align-items-center" style="margin-right: 10px; ">
-                        <i class="fa fa-user" style="font-size:20px; margin-right: 3px;"></i>
-                        <p style="margin-top: 15px;"><strong>{{currentusername}}</strong></p>
-                      </div>
-
-                      <button v-if="!isLoggedIn" @click="signIn" type="button" class="btn btn-primary position-relative border rounded py-1 px-3 d-none d-md-block mb-0" style="background-color: white; color: #033143; margin-right: 15px;"><i class="fa fa-user-alt m-1 me-md-2" style="color: #033143; cursor: pointer;"></i>
-                        Sign in
-                      </button>
-
-                      <button v-if="isLoggedIn" @click="signOut" type="button" class="btn btn-primary position-relative border rounded py-1 px-3 d-none d-md-block mb-0"  style="background-color: white; color: #033143; margin-right: 15px;"><i class="fa fa-user m-1 me-md-2" style="color: #033143; cursor: pointer; font-size: 1.2rem;"></i>
-                        Sign Out
-                      </button>
-
-                      <!-- sign in modal -->
-
-                      <div v-show="showSignLoginModal" :class="{'background-fade': showSignLoginModal}" class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <!-- <h3 class="modal-title fs-5" id="exampleModalLabel">Already an account ? <span>Login</span></h3> -->
-                              <button type="button" class="btn-close" @click="showSignLoginModal = false" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <form>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="recipient-name" class="col-form-label">Email</label>
-                                    <div></div>
-                                  </div>
-                                  <input v-model="enteredEmail" type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="message-text" class="col-form-label">Password</label>
-                                    <div></div>
-                                  </div>
-                                  <input v-model="enteredPassword" type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="d-flex justify-content-between">
-                                  <div></div>
-                                  <button @click="loginUser" type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Login</button>
-                                  <div></div>
-                                </div>
-                              </form>
-                            </div>
-                            <div class="modal-footer d-flex justify-content-center align-items-center">
-                              <p class="modal-title fs-5" id="exampleModalLabel">new user?</p>
-                              <!-- <button @click="createAccount" type="button" class="btn btn-primary" style="background-color: #04a9f5; color: white; border: none;">Create Account</button> -->
-                               <a @click="createAccount" href="#" style="color: #04a9f5;">Create account</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <!-- crate account modal -->
-
-                      <div v-show="showCreateAccountModal" class="modal fade show" :class="{'background-fade' : showCreateAccountModal}" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Create your account</h1>
-                                <button type="button" class="btn-close" @click="showCreateAccountModal = false" data-bs-dismiss="modal" aria-label="Close"></button>
-                             
-                            </div>
-                            <div class="modal-body">
-                              <form>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="recipient-name" class="col-form-label">Email</label>
-                                    <div></div>
-                                  </div>
-                                  <input v-model="enteredEmail" type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="message-text" class="col-form-label">Username</label>
-                                    <div></div>
-                                  </div>
-                                  <input v-model="enteredUsername" type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="message-text" class="col-form-label">Password</label>
-                                    <div></div>
-                                  </div>
-                                  
-                                  <input v-model="enteredPassword" type="text" class="form-control" id="recipient-name">
-                                </div>
-                                <div class="mb-2">
-                                  <div class="d-flex justify-content-between">
-                                    <label for="message-text" class="col-form-label">Confirm Password</label>
-                                    <div></div>
-                                  </div>
-                                  <input v-model="enteredConfirmPassword" type="text" class="form-control" id="recipient-name">
-                                </div>
-                              </form>
-                            </div>
-                            <div class="modal-footer d-flex justify-content-center align-items-center">
-                              <button @click="createNewUserAccount" type="button" class="btn btn-primary" style="background-color: #04a9f5; color: white; border: none;">create</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-
-
-
-
-
-                      <button @click="showMyWishList"  type="button" class="btn btn-primary position-relative border rounded py-1 px-3 d-none d-md-block mb-0" style="background-color: white; color: #033143; margin-right: 15px;"><i class="fa fa-heart m-1 me-md-2" style="color: #033143; cursor: pointer;"></i>
-                        Wishlist
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                          {{totalWishListCount}}
-                        </span>
-                      </button>
-
-
-                      <button @click="showMyCart"  type="button" class="btn btn-primary position-relative border rounded py-1 px-3 d-none d-md-block mb-0" style="background-color: white; color: #033143;"><i class="fa fa-shopping-cart m-1 me-md-2" style="color: #033143; cursor: pointer;"></i>
-                        My cart
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                          {{totalProductCount}}
-                        </span>
-                      </button>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-           
-            <!-- Jumbotron -->
-          
-            <!-- Heading -->
-            <div style="background-color: #033143;">
-
-              
-              <div class="container py-4">
+          <div style="background-color: #033143; margin-top: 70px;">           
+            <div class="container py-4">
                 <!-- Breadcrumb -->
                 <nav class="d-flex">
-                  <h6 class="mb-0">
-                    <a href="../../app_page/home_page/index.html" style="color: white;">Home</a>
-                    <span class="text-white-50 mx-2"> > </span>
-                    <a href="" class="text-white"><u>Product Details</u></a>
-                  </h6>
+                    <h6 class="mb-0">
+                      <a href="../../app_page/home_page/index.html" style="color: white;">Home</a>
+                      <span class="text-white-50 mx-2"> > </span>
+                      <a href="" class="text-white"><u>Product Details</u></a>
+                    </h6>
                 </nav>
-                <!-- Breadcrumb -->
-              </div>
-            </div>
-            <!-- Heading -->
-          </header>
+                    <!-- Breadcrumb -->        
+            </div>        
+          </div>
+                    
 
+      </header>
 
           <!-- My wishList -->
 
@@ -687,143 +520,7 @@
 
 
             <!-- Footer -->
-          <footer class="text-center text-lg-start text-muted  mt-3" style="background-color: rgb(244, 246, 250);">
-            <!-- Section: Links  -->
-            <section class="">
-              <div class="container text-center text-md-start pt-4 pb-4">
-                <!-- Grid row -->
-                <div class="row mt-3">
-                  <!-- Grid column -->
-                  <div class="col-12 col-lg-3 col-sm-12 mb-2">
-                    <!-- Content -->
-                    <img src="/assests/logo-colored.svg" alt="">
-                    <div style="margin-top: 15px;">
-                      <p class="mt-1 text-dark">
-                        &copy; 2025 copyright : Bizvibe.com
-                       </p>
-                    </div>
-                      
-                       
-                    
-                  </div>
-                  <!-- Grid column -->
-          
-                  <!-- Grid column -->
-                  <div class="col-6 col-sm-4 col-lg-2">
-                    <!-- Links -->
-                    <h6 class="text-uppercase  fw-bold mb-2">
-                      Store
-                    </h6>
-                    <ul class="list-unstyled mb-4">
-                      <li><a  href="#">About us</a></li>
-                      <li><a  href="#">Find store</a></li>
-                      <li><a  href="#">Categories</a></li>
-                      <li><a  href="#">Blogs</a></li>
-                    </ul>
-                  </div>
-                  <!-- Grid column -->
-          
-                  <!-- Grid column -->
-                  <div class="col-6 col-sm-4 col-lg-2">
-                    <!-- Links -->
-                    <h6 class="text-uppercase  fw-bold mb-2">
-                      Information
-                    </h6>
-                    <ul class="list-unstyled mb-4">
-                      <li><a href="#">Help center</a></li>
-                      <li><a href="#">Money refund</a></li>
-                      <li><a href="#">Shipping info</a></li>
-                      <li><a href="#">Refunds</a></li>
-                    </ul>
-                  </div>
-                  <!-- Grid column -->
-          
-                  <!-- Grid column -->
-                  <div class="col-6 col-sm-4 col-lg-2">
-                    <!-- Links -->
-                    <h6 class="text-uppercase  fw-bold mb-2">
-                      Support
-                    </h6>
-                    <ul class="list-unstyled mb-4">
-                      <li><a href="#">Help center</a></li>
-                      <li><a  href="#">Documents</a></li>
-                      <li><a  href="#">Account restore</a></li>
-                      <li><a  href="#">My orders</a></li>
-                    </ul>
-                  </div>
-                  <!-- Grid column -->
-          
-                  <!-- Grid column -->
-                  <div class="col-12 col-sm-12 col-lg-3">
-                    <!-- Links -->
-                    <h6 class="text-uppercase  fw-bold mb-2">Newsletter</h6>
-                    <p style="color: dimgray;">Stay in touch with latest updates about our products and offers</p>
-                    <div class="input-group mb-3">
-                      <input type="email" class="form-control border" placeholder="Email" aria-label="Email" aria-describedby="button-addon2" />
-                      <button class="btn btn-light border shadow-0" type="button" id="button-addon2" data-mdb-ripple-color="dark">
-                        Join
-                      </button>
-                    </div>
-                  </div>
-                  <!-- Grid column -->
-                </div>
-                <!-- Grid row -->
-              </div>
-            </section>
-            <!-- Section: Links  -->
-          
-            <div class="">
-              <div class="container">
-                <div class="d-flex justify-content-between py-4 border-top">
-                  <!--- payment --->
-                  <div>
-                    <i style="color: rgb(80, 187, 229);  padding: 7px;" class="fab fa-lg fa-cc-visa"></i>
-                    <i style="color: rgb(80, 187, 229);  padding: 7px;" class="fab fa-lg fa-cc-amex"></i>
-                    <i style="color: rgb(80, 187, 229); padding: 7px;" class="fab fa-lg fa-cc-mastercard"></i>
-                    <i style="color: rgb(80, 187, 229);  padding: 7px;" class="fab fa-lg fa-cc-paypal"></i>
-                  </div>
-                  <!--- payment --->
-          
-                  <!--- language selector --->
-                  <div class="dropdown dropup">
-                    <a  style="color: #033143;" class="dropdown-toggle" href="#" id="Dropdown" role="button" data-mdb-toggle="dropdown" aria-expanded="false"> <i class="flag-united-kingdom flag m-0 me-1"></i>English </a>
-          
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="Dropdown">
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-united-kingdom flag"></i>English <i class="fa fa-check text-secondary ms-2"></i></a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-poland flag"></i>Polski</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-china flag"></i>中文</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-japan flag"></i>日本語</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-germany flag"></i>Deutsch</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-france flag"></i>Français</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-spain flag"></i>Español</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-russia flag"></i>Русский</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"><i class="flag-portugal flag"></i>Português</a>
-                      </li>
-                    </ul>
-                  </div>
-                  <!--- language selector --->
-                </div>
-              </div>
-            </div>
-          </footer>
+            <page-footer></page-footer>
           <!-- Footer -->
 
     
@@ -832,9 +529,17 @@
 </template>
 
 <script type="module">
+// import DetailHeader from '../components/DetailHeader.vue'
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue';
     import { ref, computed, onMounted } from 'vue';
 
     export default{
+      components:{
+        // 'detail-header' : DetailHeader,
+        'page-header' : Header,
+        'page-footer' : Footer
+      },
         setup(){
 
             const getUsernameFromStorage = () => {
@@ -1517,13 +1222,13 @@ position: absolute;
 
 .list-unstyled a{
   text-decoration:  none;
-  /* color: rgb(80, 187, 229); */
+  
   color: #04a9f5;
 }
 
 
 .text-uppercase{
-  /* color: rgb(80, 187, 229); */
+
   color: #033143;
 }
 .sticky-header{
@@ -1536,29 +1241,13 @@ position: absolute;
   width: 100%;
 }
 
-/* .gradient-custom {
-  background: #6a11cb;
-  
-  background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
-  
-  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
-  } */
+
 
   button.checkout{
     border: none;
     background-color: #04a9f5 !important;
   } 
 
-
-
-/* .modal-content {
-  background-color: #fff;
-  transition: transform 0.3s ease-out;
-} */
-
-/* .modal-content .btn-close {
-  color: #007bff;
-}  */
 
 .cart-item {
   transition: background-color 0.2s ease;
@@ -1568,23 +1257,16 @@ position: absolute;
   background-color: #f1f1f1;
 }
 
-/* .cart-item-quantity input {
-  font-size: 1.1rem;
-  padding: 5px;
-} */
+
 
 .remove-item button:hover {
   background-color: #dc3545;
 }
 
-/* .modal-footer button:hover {
-  background-color: #0056b3;
-  color: #fff;
-} */
+
  a.nav-link:hover{
   text-decoration: none;
-  /* color: white !important; */
-  /* background-color: #04a9f5 !important; */
+ 
 }
 
 .background-fade {
@@ -1596,11 +1278,7 @@ position: absolute;
   color: #04a9f5 !important ;
 }
 
-/* .info.similar-nav:hover{
-  color: black !important;
 
-  background-color: transparent !important;
-} */
 
 .no-hover-background:hover {
   background-color: transparent !important;
@@ -1612,7 +1290,6 @@ position: absolute;
 }
 
 
-/* write review (rating star), modal  */
 
 .fa-star.filled {
   color: #ffc107;

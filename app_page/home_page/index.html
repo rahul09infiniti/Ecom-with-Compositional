@@ -72,10 +72,12 @@
   />
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  
 </head>
 <body>
     <div id="app">
         <home-page></home-page>
+        
     </div>
 
     <script type="importmap">
@@ -129,7 +131,7 @@
 
         const app = createApp({
             components:{
-                'home-page' : defineAsyncComponent(() => loadModule('../../resources/view/HomePage.vue', options))
+                'home-page' : defineAsyncComponent(() => loadModule('../../resources/view/HomePage.vue', options)),
             }
         }).mount('#app');
     </script>
