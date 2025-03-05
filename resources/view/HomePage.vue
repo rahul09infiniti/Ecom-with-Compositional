@@ -2,7 +2,7 @@
     <div id="ecommerce">
       <!-- Header -->
 
-      <page-header></page-header>
+      <page-header :key="totalWishlistProduct"></page-header>
 
       <div v-show="myWishListVisible" :class="{'background-fade': myWishListVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
               <div  class="modal-dialog modal-lg">
@@ -316,6 +316,7 @@ import Footer from '../components/Footer.vue'
 
       },
       setup() {
+        const totalWishlistProduct = ref(0);
           const enteredEmail = ref('');
           const enteredUsername = ref('');
           const enteredPassword = ref('');
@@ -380,9 +381,9 @@ import Footer from '../components/Footer.vue'
             return cart.length;
           });
 
-          const totalWishListCount = computed(() => {
-            return wishList.length;
-          });
+          // const totalWishListCount = computed(() => {
+          //   return wishList.length;
+          // });
 
 
 
@@ -594,7 +595,9 @@ import Footer from '../components/Footer.vue'
 
          
 
+          // const emit = defineEmits();
           const saveToWishList = (product) => {
+            totalWishlistProduct.value++;
             console.log("calling", product.value);
 
             if (product) {
@@ -630,6 +633,7 @@ import Footer from '../components/Footer.vue'
 
                         wishList.push(wishListItem);
                         localStorage.setItem('wishList', JSON.stringify(wishList));
+                        
 
                         showAlertModal.value = true;
                     } else {
@@ -942,7 +946,7 @@ import Footer from '../components/Footer.vue'
 
 
           return {
-               
+                // totalWishListCount,
                 enteredEmail,
                 enteredUsername,
                 enteredPassword,
@@ -989,8 +993,9 @@ import Footer from '../components/Footer.vue'
                 totalPrice,
                 totalDicountPrice,
                 cartItemCount,
+                totalWishlistProduct,
                 totalProductCount,
-                totalWishListCount,
+               
                 signIn,
                 createAccount,
                 createNewUserAccount,

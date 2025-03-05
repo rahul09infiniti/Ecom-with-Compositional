@@ -4,7 +4,7 @@
       <header class="sticky-header">
         
 
-          <page-header>
+          <page-header :key="totalWishlistProduct">
           </page-header>
           
           <div style="background-color: #033143; margin-top: 70px;">           
@@ -541,7 +541,7 @@ import Footer from '../components/Footer.vue';
         'page-footer' : Footer
       },
         setup(){
-
+          const totalWishlistProduct = ref(0);
             const getUsernameFromStorage = () => {
                 const storedUsername = localStorage.getItem('currentUsername');
                 return storedUsername ? storedUsername : 'guest';
@@ -860,6 +860,7 @@ import Footer from '../components/Footer.vue';
 
 
             const saveToWishList = () => {
+              totalWishlistProduct.value++;
               console.log("wishlist calling");
 
               if (productInfo.value) {
@@ -890,6 +891,7 @@ import Footer from '../components/Footer.vue';
                   // Update button states and other variables
                   isInWishList.value = true;
                   saveButtonText.value = "Saved";
+                 
                   checkProductInWishList(); // Assuming this function is available in your setup
                 }
               }
@@ -954,12 +956,7 @@ import Footer from '../components/Footer.vue';
             };
 
 
-            const removeItemFromWishList = (itemId) => {
-                const updatedWishList = wishList.value.filter(item => item.id !== itemId);
-                wishList.value = updatedWishList;
-                isInWishList.value = false;
-                localStorage.setItem('wishList', JSON.stringify(updatedWishList));
-            };
+           
 
             const cartIncreaseQuantity = (itemId) => {
                 const item = cart.find(item => item.id === itemId);
@@ -1137,6 +1134,7 @@ import Footer from '../components/Footer.vue';
             };
 
             return {
+              totalWishlistProduct,
                 currentUsername,
                 productInfo,
                 productId,
@@ -1171,7 +1169,7 @@ import Footer from '../components/Footer.vue';
                 showMyCart,
                 showMyWishList,
                 removeItem,
-                removeItemFromWishList,
+              
                 cartIncreaseQuantity,
                 cartDecreaseQuantity,
                 wishListIncreaseQuantity,

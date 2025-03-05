@@ -165,7 +165,95 @@
 
             <!-- wish list modal copied from details.html  -->
 
+            <div v-show="myWishListVisible" :class="{'background-fade': myWishListVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+              <div  class="modal-dialog modal-lg">
+                <div  class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold; color: #333;">Your wishList</h5>
+                    <button type="button" class="btn-close" @click="myWishListVisible = false" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" style="max-height: 400px; overflow-y: auto; padding: 20px;">
+                    <div v-for="item in wishList" :key="item.id" class="cart-item d-flex justify-content-between align-items-center mb-3 p-3" style="border-bottom: 1px solid #dee2e6;">
+                      <div class="cart-item-image" style="width: 70px; height: 70px; overflow: hidden; margin-right: 15px; border-radius: 8px;">
+                        <img :src="item.images[0]" alt="Product Image" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;">
+                      </div>
+                      <div class="cart-item-details flex-grow-1 d-flex flex-column ">
+                        <h4 class="mb-1" style="font-size: 1.1rem; color: #333; font-weight: bold;">{{ item.title }}</h4>
+                        
+  
+                        <div class=" d-flex  mb-3">
+  
+                          <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{((item.discountPrice) *  (item.quantity)).toFixed(2)}}</p></div>
+                          <div>
+                            <span class="text-danger" style="font-size: 1rem;"> 
+                              <s> ${{ ((item.price)* (item.quantity)).toFixed(2) }}</s>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+  
+                      <div class="d-flex justify-content-center align-items-center">
+                        <div class="cart-item-quantity" style="text-align: center; margin-right: 14px;">
+                          <label class="mb-2 d-block" style="font-size: 0.9rem;">Quantity</label>
+                          <div class="input-group mb-3" style="width: 150px;">
+                            <button class="btn btn-outline-secondary px-3" type="button" id="button-addon1" @click="wishListDecreaseQuantity(item.id)">
+                              <i class="fas fa-minus"></i>
+                            </button>
+  
+                            <input type="text" class="form-control text-center border border-secondary" :value="item.quantity" aria-label="Quantity" aria-describedby="button-addon1" />
+                            <button class="btn btn-outline-secondary px-3" type="button" id="button-addon2" @click="wishListIncreaseQuantity(item.id)">
+                              <i class="fas fa-plus"></i>
+                            </button>
+                          </div>
+                        </div>
+  
+                        <button @click="moveToCart(item)" type="button" class="checkout btn btn-primary" style="margin-top: 13px; margin-right: 10px;">Move to Cart</button>
+    
+                        <div class="remove-item" style="margin-top: 8px;">
+                          <button @click="removeItemFromWishList(item.id)" class=" btn btn-danger" style="border-radius: 50%; padding: 4px 9px; border: none;">
+                            <i class="fas fa-trash-alt"></i>
+                          </button>
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+  
+                <!-- Alert Modal -->
+  
+                  <div v-show="showAlertModal" :class="{'background-fade': showAlertModal}" class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                          <button type="button" class="btn-close" @click="showAlertModal = false" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          {{modalMessage}}
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" @click="showAlertModal = false" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                          <button type="button" @click="confirmMoveToCart()" class="btn btn-primary">Yes</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+  
+  
+                  <div class="modal-footer d-flex ">
+                    <div class="d-flex">
+                      <button type="button" class="btn btn-secondary" @click="myWishListVisible = false" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+            </div>
             
+
+
+
+
+
 
             <div v-show="myCartVisible" :class="{'background-fade': myCartVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
               <div  class="modal-dialog modal-lg">
@@ -256,7 +344,9 @@
 import {ref, reactive, computed, onMounted} from 'vue';
     export default {
         setup(){
+          const totalWishlistProduct = ref(0)
             const headerInputBoxPath = ref(false);
+            // const totalWishListCount = ref(0);
             const enteredEmail = ref('');
             const enteredUsername = ref('');
             const enteredPassword = ref('');
@@ -294,7 +384,6 @@ import {ref, reactive, computed, onMounted} from 'vue';
             const cart = reactive([]);
             const wishList = reactive([]);
             const cartButtonText = ref('Add to cart');
-            const saveButtonText = ref('Save');
             const myCartVisible = ref(false);
             const myWishListVisible = ref(false);
             const isInWishList = ref(false);
@@ -336,6 +425,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 loadCartFromLocalStorage();
                 
             });
+
             const fetchProductDetails = async () => {
             if (!productId.value) return;
 
@@ -367,7 +457,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 wishList.value = storedWishList;
                 // saveToWishList(); 
             };
-
+           
             const saveToWishList = (product) => {
                 if (!product || !product.price || !product.title || !product.id) {
                     console.error("Invalid product object:", product);
@@ -429,13 +519,16 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 }
             };
            
+            const wishlistButtonText = ref('Save');
 
             const removeItemFromWishList = (itemId) => {
                 const updatedWishList = wishList.filter(item => item.id !== itemId);
-                wishList.value = updatedWishList
+                wishList.length = 0;
+                wishList.push(...updatedWishList); 
                 isInWishList.value = false;
                 localStorage.setItem('wishList', JSON.stringify(updatedWishList));
             };
+
 
                 
             const moveToCart = (item) => {
@@ -444,7 +537,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
                     
             const checkProductInWishList = () => {
                 const wishList = JSON.parse(localStorage.getItem('wishList')) || [];
-                const existingProduct = wishList.find(item => item.id == productInfo.value.id);
+                const existingProduct = wishList.find(item => item.id == productInfo.value.id); 
 
                 if (existingProduct) {
                     console.log("product is in wishlist", existingProduct);
@@ -511,7 +604,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
 
 
             return{
-                wishList, totalWishListCount, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
+              wishlistButtonText, totalWishListCount, totalWishlistProduct, wishList, totalWishListCount, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
                 myCartVisible, saveToWishList, removeItemFromWishList,loadCartFromLocalStorage, addToCart, fetchProductDetails, wishListDecreaseQuantity,  wishListIncreaseQuantity, moveToCart
             }
         }
