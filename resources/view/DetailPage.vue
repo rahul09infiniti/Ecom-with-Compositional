@@ -4,7 +4,7 @@
       <header class="sticky-header">
         
 
-          <page-header :key="totalWishlistProduct">
+          <page-header :cart="cart"  :updateWishList="updateWishList" :key="`${totalWishlistProduct}-${totalCartItem}`">
           </page-header>
           
           <div style="background-color: #033143; margin-top: 70px;">           
@@ -44,10 +44,11 @@
 
                       <div class=" d-flex  mb-3">
 
-                        <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{((item.discountPrice) *  (item.quantity)).toFixed(2)}}</p></div>
+                        <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{ (item.discountPrice && item.quantity) ? (item.discountPrice * item.quantity).toFixed(2) : '0.00' }}
+                        </p></div>
                         <div>
                           <span class="text-danger" style="font-size: 1rem;"> 
-                            <s> ${{ ((item.price)* (item.quantity)).toFixed(2) }}</s>
+                            <s>  ${{ (item.price && item.quantity) ? (item.price * item.quantity).toFixed(2) : '0.00' }}</s>
                           </span>
                         </div>
                       </div>
@@ -130,10 +131,11 @@
 
                       <div class=" d-flex  mb-3">
 
-                        <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{((item.discountPrice) *  (item.quantity)).toFixed(2)}}</p></div>
+                        <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{ (item.discountPrice && item.quantity) ? (item.discountPrice * item.quantity).toFixed(2) : '0.00' }}
+                        </p></div>
                         <div>
                           <span class="text-danger" style="font-size: 1rem;"> 
-                            <s> ${{ ((item.price)* (item.quantity)).toFixed(2) }}</s>
+                            <s> ${{ (item.price && item.quantity) ? (item.price * item.quantity).toFixed(2) : '0.00' }}</s>
                           </span>
                         </div>
 
@@ -171,9 +173,11 @@
                     <h4>Total</h4>
                     <div class="d-flex">
                       <h5 style="margin-right: 8px; color: #28a745; font-size: 1.2rem; font-weight: 500;">Price : </h5>
-                      <p style="margin-right: 8px; color: #28a745; font-size: 1rem; font-weight: 500;">${{totalDicountPrice.toFixed(2)}}</p>
+                      <p style="margin-right: 8px; color: #28a745; font-size: 1rem; font-weight: 500;">${{ (totalDicountPrice && !isNaN(totalDicountPrice)) ? totalDicountPrice.toFixed(2) : '0.00' }}
+                      </p>
                       <span class="text-danger">
-                        <s>${{ totalPrice.toFixed(2)}}</s>
+                        <s>${{ (totalPrice && !isNaN(totalPrice)) ? totalPrice.toFixed(2) : '0.00' }}
+                        </s>
                         </span>
                     </div>
                   </div>
@@ -252,7 +256,7 @@
                         </h4>
                         <span class="text-danger">
                           <s>${{ productInfo.price }}</s>
-                          </span>
+                        </span>
                       <span class="text-muted">/per box</span>
                     </div>
           
@@ -330,6 +334,7 @@
                     <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
                     <a @click="addToCart" href="#" class="btn btn-primary" style="margin: 0px 15px; background-color: #04a9f5; border: none;"> <i class="me-1 fa fa-shopping-basket"  aria-label="Add to Cart"></i> {{cartButtonText}} </a>
                     <a @click="saveToWishList" href="#" class="btn btn-light border border-secondary py-2 px-3"> <i :class="['me-1', 'fa', 'fa-heart', 'fa-lg', { 'text-danger': isInWishList }]"></i> {{saveButtonText}} </a>
+                    
                   </div>
                 </main>
               </div>
@@ -541,7 +546,9 @@ import Footer from '../components/Footer.vue';
         'page-footer' : Footer
       },
         setup(){
+          const childRef = ref(null);
           const totalWishlistProduct = ref(0);
+          const totalCartItem = ref(0);
             const getUsernameFromStorage = () => {
                 const storedUsername = localStorage.getItem('currentUsername');
                 return storedUsername ? storedUsername : 'guest';
@@ -580,23 +587,7 @@ import Footer from '../components/Footer.vue';
             const comment = ref('');
 
 
-            const totalPrice = computed(() => {
-                return (cart.value && Array.isArray(cart.value)) 
-                    ? cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-                    : 0;
-            });
-
-            const totalDicountPrice = computed(() => {
-                return (cart.value && Array.isArray(cart.value)) 
-                    ? cart.value.reduce((discountSum, item) => discountSum + item.discountPrice * item.quantity, 0)
-                    : 0;
-            });
-
-            const cartItemCount = computed(() => {
-                return (cart.value && Array.isArray(cart.value)) 
-                    ? cart.value.reduce((count, item) => count + item.quantity, 0)
-                    : 0;
-            });
+      
 
             const totalProductCount = computed(() => {
                 return cart.length;
@@ -618,6 +609,23 @@ import Footer from '../components/Footer.vue';
                 loadReviewFirst();
                 fetchProductDetails();
             });
+
+            const updateWishList = (updatedWishList) => {
+              wishList.value = updatedWishList;
+              saveButtonText.value = 'Save'
+            };
+
+
+            const handleItemRemoved = (itemId) => {
+              const itemIndex = wishList.findIndex(item => item.id === itemId);
+              if (itemIndex !== -1) {
+                wishList.splice(itemIndex, 1);
+              }
+
+              isInWishList.value = wishList.some(item => item.id === itemId);
+              
+              localStorage.setItem('wishList', JSON.stringify(wishList));
+            };
 
 
             const signIn = () => {
@@ -719,6 +727,8 @@ import Footer from '../components/Footer.vue';
                     // this.postReview();
 
                     console.log('fetched product', productInfo.value);
+
+                   
                 } catch (error) {
                     console.log("Error fetching product details", error);
                 }
@@ -825,15 +835,15 @@ import Footer from '../components/Footer.vue';
             };
 
             const addToCart = () => {
+              console.log("cart calling");
+              
+              totalCartItem.value++;
               if (productInfo.value) {
-                // Retrieve cart from localStorage or initialize it as an empty array
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-                // Check if the product is already in the cart
                 const existingProduct = cart.find(item => item.id === productInfo.value.id);
 
                 if (!existingProduct) {
-                  // If the product doesn't exist in the cart, add a new item
                   const cartItem = {
                     id: productInfo.value.id,
                     title: productInfo.value.title,
@@ -843,20 +853,32 @@ import Footer from '../components/Footer.vue';
                     quantity: placeholder.value
                   };
 
-                  // Add the new product to the cart
                   cart.push(cartItem);
+                  
+
                 } else {
-                  // If the product exists, update the quantity
                   existingProduct.quantity = placeholder.value;
                 }
 
-                // Save the updated cart to localStorage
                 localStorage.setItem('cart', JSON.stringify(cart));
+                calculateTotalDiscountPrice(cart);
+                cart.value = cart;
+                
 
-                // Update the button text
                 checkProductInCartForAdded();
               }
             };
+
+
+            const calculateTotalDiscountPrice = (cart) => {
+              // Calculate the total discount price by summing up the discountPrice * quantity of each item
+              totalDicountPrice.value = cart.reduce((acc, item) => acc + (item.discountPrice * item.quantity), 0);
+            };
+
+            const updateCart = (updatedCart) => {
+              cart.value = updatedCart;
+            };
+
 
 
             const saveToWishList = () => {
@@ -864,14 +886,11 @@ import Footer from '../components/Footer.vue';
               console.log("wishlist calling");
 
               if (productInfo.value) {
-                // Retrieve wish list from localStorage or initialize it as an empty array
                 const wishList = JSON.parse(localStorage.getItem('wishList')) || [];
 
-                // Check if the product is already in the wish list
                 const existingWishListProduct = wishList.find(item => item.id === productInfo.value.id);
                 
                 if (!existingWishListProduct) {
-                  // If the product doesn't exist in the wish list, add a new item
                   const wishListItem = {
                     id: productInfo.value.id,
                     title: productInfo.value.title,
@@ -881,18 +900,15 @@ import Footer from '../components/Footer.vue';
                     quantity: placeholder.value
                   };
 
-                  // Add the new product to the wish list
                   wishList.push(wishListItem);
                   
-                  // Save the updated wish list to localStorage
                   localStorage.setItem('wishList', JSON.stringify(wishList));
                   wishList.value = wishList;
 
-                  // Update button states and other variables
                   isInWishList.value = true;
                   saveButtonText.value = "Saved";
                  
-                  checkProductInWishList(); // Assuming this function is available in your setup
+                  checkProductInWishList(); 
                 }
               }
             };
@@ -906,11 +922,11 @@ import Footer from '../components/Footer.vue';
             };
 
             const showMyWishList = () => {
-                myWishListVisible.value = !myWishListVisible.value;
-                if (myWishListVisible.value) {
-        const storedWishList = JSON.parse(localStorage.getItem('wishList')) || [];
-        wishList.value = storedWishList;
-    }
+              myWishListVisible.value = !myWishListVisible.value;
+              if (myWishListVisible.value) {
+              const storedWishList = JSON.parse(localStorage.getItem('wishList')) || [];
+              wishList.value = storedWishList;
+            }
             };
 
             const checkProductInCartForAdded = () => {
@@ -936,6 +952,9 @@ import Footer from '../components/Footer.vue';
                     isInWishList.value = true;
                     console.log(saveButtonText.value);
                 } else {
+                  if (childRef.value) {
+                      childRef.value.removeItemFromWishList(); 
+                    }
                     saveButtonText.value = "Save";
                     isInWishList.value = false;
                 }
@@ -1150,9 +1169,6 @@ import Footer from '../components/Footer.vue';
                 setRating,
                 loadReviewFirst,
                 postReview,
-                totalPrice,
-                totalDicountPrice,
-                cartItemCount,
                 totalProductCount,
                 totalWishListCount,
                 signIn,
@@ -1169,7 +1185,7 @@ import Footer from '../components/Footer.vue';
                 showMyCart,
                 showMyWishList,
                 removeItem,
-              
+                handleItemRemoved,
                 cartIncreaseQuantity,
                 cartDecreaseQuantity,
                 wishListIncreaseQuantity,
@@ -1185,7 +1201,10 @@ import Footer from '../components/Footer.vue';
                 totalWishListCount,
                 myWishListVisible,
                 myCartVisible,
-                
+                childRef,
+                updateWishList,
+                updateCart,
+                calculateTotalDiscountPrice
 
             };
 

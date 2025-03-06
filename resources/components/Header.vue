@@ -1,5 +1,5 @@
 <template>
-
+  
     <div>
         <header data-bs-theme="white">
         <div class="sticky-header navbar navbar-dark bg-white" style="margin-bottom: 50px;">
@@ -342,8 +342,19 @@
 
 <script type="module">
 import {ref, reactive, computed, onMounted} from 'vue';
+import { defineProps, defineEmits } from 'vue';
     export default {
-        setup(){
+      props: ['updateWishList'],
+      props: ['cart', 'myCartVisible'],
+        setup(props){
+
+          
+
+          function closeCart(){
+            this.$emit('updateCart', this.cart); // Optionally pass updated cart back to parent
+          };
+          const emit = defineEmits();
+
           const totalWishlistProduct = ref(0)
             const headerInputBoxPath = ref(false);
             // const totalWishListCount = ref(0);
@@ -383,6 +394,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
             const itemToMove = ref(null);
             const cart = reactive([]);
             const wishList = reactive([]);
+            const saveButtonText = ref('Saved')
             const cartButtonText = ref('Add to cart');
             const myCartVisible = ref(false);
             const myWishListVisible = ref(false);
@@ -396,15 +408,21 @@ import {ref, reactive, computed, onMounted} from 'vue';
 
 
             const totalPrice = computed(() => {
-                return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                return (cart.value && Array.isArray(cart.value)) 
+                    ? cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+                    : 0;
             });
-            
+
             const totalDicountPrice = computed(() => {
-                return cart.reduce((discountSum, item) => discountSum + item.discountPrice * item.quantity, 0);
+                return (cart.value && Array.isArray(cart.value)) 
+                    ? cart.value.reduce((discountSum, item) => discountSum + item.discountPrice * item.quantity, 0)
+                    : 0;
             });
-            
+
             const cartItemCount = computed(() => {
-                return cart.reduce((count, item) => count + item.quantity, 0);
+                return (cart.value && Array.isArray(cart.value)) 
+                    ? cart.value.reduce((count, item) => count + item.quantity, 0)
+                    : 0;
             });
 
             
@@ -423,6 +441,7 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 // saveToWishList(); 
                 checkPath();
                 loadCartFromLocalStorage();
+                
                 
             });
 
@@ -455,41 +474,40 @@ import {ref, reactive, computed, onMounted} from 'vue';
             const loadWishList = () => {
                 const storedWishList = JSON.parse(localStorage.getItem('wishlist')) || [];
                 wishList.value = storedWishList;
-                // saveToWishList(); 
             };
            
-            const saveToWishList = (product) => {
-                if (!product || !product.price || !product.title || !product.id) {
-                    console.error("Invalid product object:", product);
-                    return;
-                }
+            // const saveToWishList = (product) => {
+            //     if (!product || !product.price || !product.title || !product.id) {
+            //         console.error("Invalid product object:", product);
+            //         return;
+            //     }
 
-                if (isNaN(product.price) || (product.discountPercentage && isNaN(product.discountPercentage))) {
-                    alert("Invalid price or discount percentage");
-                    return;
-                }
+            //     if (isNaN(product.price) || (product.discountPercentage && isNaN(product.discountPercentage))) {
+            //         alert("Invalid price or discount percentage");
+            //         return;
+            //     }
 
-                const discountPrice = product.discountPercentage
-                    ? (product.price - (product.price * product.discountPercentage / 100)).toFixed(2)
-                    : product.price.toFixed(2);
+            //     const discountPrice = product.discountPercentage
+            //         ? (product.price - (product.price * product.discountPercentage / 100)).toFixed(2)
+            //         : product.price.toFixed(2);
 
-                const discountPriceNum = parseFloat(discountPrice); 
+            //     const discountPriceNum = parseFloat(discountPrice); 
 
-                const productToAdd = {
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    discountPrice: discountPriceNum,
-                    quantity: 1,  
-                    images: product.images,
-                };
+            //     const productToAdd = {
+            //         id: product.id,
+            //         title: product.title,
+            //         price: product.price,
+            //         discountPrice: discountPriceNum,
+            //         quantity: 1,  
+            //         images: product.images,
+            //     };
 
-                const existingProduct = wishList.value.find(item => item.id === productToAdd.id);
-                if (!existingProduct) {
-                    wishList.value.push(productToAdd);
-                    localStorage.setItem('wishlist', JSON.stringify(wishList.value));
-                }
-            };
+            //     const existingProduct = wishList.value.find(item => item.id === productToAdd.id);
+            //     if (!existingProduct) {
+            //         wishList.value.push(productToAdd);
+            //         localStorage.setItem('wishlist', JSON.stringify(wishList.value));
+            //     }
+            // };
 
 
            
@@ -519,17 +537,24 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 }
             };
            
-            const wishlistButtonText = ref('Save');
+            // const wishlistButtonText = ref('Save');
 
             const removeItemFromWishList = (itemId) => {
-                const updatedWishList = wishList.filter(item => item.id !== itemId);
+              let storedWishList = JSON.parse(localStorage.getItem('wishList')) || [];
+                const updatedWishList = storedWishList.filter(item => item.id !== itemId);
+                localStorage.setItem('wishList', JSON.stringify(updatedWishList));
                 wishList.length = 0;
                 wishList.push(...updatedWishList); 
                 isInWishList.value = false;
-                localStorage.setItem('wishList', JSON.stringify(updatedWishList));
+                saveButtonText.value = 'save'
+
+                props.updateWishList(updatedWishList);
+                
             };
 
-
+            // defineExpose({
+            //     removeItemFromWishList
+            // });
                 
             const moveToCart = (item) => {
                 removeItemFromWishList(item.id); 
@@ -549,7 +574,19 @@ import {ref, reactive, computed, onMounted} from 'vue';
                     isInWishList.value = false;
                 }
             };
+            
+            const checkProductInCartForAdded = () => {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const existingProduct = cart.find(item => item.id == productInfo.value.id);
 
+                if (existingProduct) {
+                    console.log("Product is in cart:", existingProduct);
+                    cartButtonText.value = 'Added';
+                } else {
+                    console.log("Product is NOT in cart.");
+                    cartButtonText.value = 'Add to cart';
+                }
+            };
             
             const loadCartFromLocalStorage = () => {
                 const cartData = JSON.parse(localStorage.getItem('cart')) || [];
@@ -570,42 +607,12 @@ import {ref, reactive, computed, onMounted} from 'vue';
                 }
             };
 
-           
-
-
-            const addToCart = () => {
-              if (productInfo.value) {
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-                const existingProduct = cart.find(item => item.id === productInfo.value.id);
-
-                if (!existingProduct) {
-                  // If the product doesn't exist in the cart, add a new item
-                  const cartItem = {
-                    id: productInfo.value.id,
-                    title: productInfo.value.title,
-                    images: productInfo.value.images,
-                    discountPrice: productInfo.value.discountPrice,
-                    price: productInfo.value.price,
-                    quantity: placeholder.value
-                  };
-
-                  cart.push(cartItem);
-                localStorage.setItem('cart', JSON.stringify(cart));
-
-                } else {
-                  existingProduct.quantity = placeholder.value;
-                }
-
-
-                checkProductInCartForAdded();
-              }
-            };
+    
 
 
             return{
-              wishlistButtonText, totalWishListCount, totalWishlistProduct, wishList, totalWishListCount, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
-                myCartVisible, saveToWishList, removeItemFromWishList,loadCartFromLocalStorage, addToCart, fetchProductDetails, wishListDecreaseQuantity,  wishListIncreaseQuantity, moveToCart
+              saveButtonText, props, totalWishListCount, totalWishlistProduct, wishList, totalWishListCount, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
+                myCartVisible, closeCart, removeItemFromWishList,loadCartFromLocalStorage, fetchProductDetails, wishListDecreaseQuantity,  wishListIncreaseQuantity, moveToCart
             }
         }
     }

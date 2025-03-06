@@ -88,6 +88,9 @@
   
             </div>
       <main>
+
+
+
         <section class="py-5 text-center container">
           <div class="row py-lg-5 m-0" style="height: 130px">
             <div class="col-lg-6 col-md-8 mx-auto">
@@ -128,6 +131,8 @@
               <button @click="viewMode = 'grid'" :class="{'btn-primary':viewMode === 'grid', 'btn-outline-secondary' : viewMode !== 'grid'}" class="btn me-3">Grid</button>
               <button @click="viewMode = 'list'" :class="{'btn-primary' : viewMode === 'list', 'btn-outline-secondary': viewMode !== 'list'}" class="btn" style="margin-right: 10px;">List</button>
               <button v-if="filtersApplied" @click="clearFilters" type="button" class="btn btn-outline-secondary">Clear</button>
+
+
             </div>
 
             <div class="d-flex justify-content-between">
@@ -390,6 +395,7 @@ import Footer from '../components/Footer.vue'
               // Lifecycle hooks
           onMounted(() => {
             allProducts();
+            console.log("total price", totalPrice);
             
             getCategory();
             checkLoginState();
