@@ -22,10 +22,14 @@
               </svg>
               <div style="margin-top: 0px;">
                 <!-- <img src="/assests/image/logo-colored.svg" alt=""> -->
-                 <img src="/assets/image/logo-colored.svg" alt="">
+                 <img src="http://localhost/Ecom-with-Compo_ESM/assets/image/logo-colored.svg" alt="">
               </div>
              
+              
+
               </a>
+
+
 
                 <div v-if="headerInputBoxPath" class="col-lg-4 col-md-12 col-12 position-relative">
                     <div class="input-group mx-auto" style="max-width: 500px; margin-right: 50px;">
@@ -52,8 +56,8 @@
             <div class="order-lg-last col-lg-6 col-sm-8 col-8 d-flex justify-content-end">
               <div class="d-flex align-items-center" style="margin-top: 8px;">
                 <div class="d-flex justify-content-center align-items-center" style="margin-right: 10px; ">
-                  <i class="fa fa-user" style="font-size:20px; margin-right: 3px;"></i>
-                  <p style="margin-top: 15px;"><strong>{{currentusername}}</strong></p>
+                  <!-- <i class="fa fa-user" style="font-size:20px; margin-right: 3px;"></i> -->
+                  <p style="margin-top: 15px;"><strong>Welcome {{currentUsername}}</strong></p>
                 </div>
 
                 <button v-if="!isLoggedIn" @click="signIn" type="button" class="btn btn-primary position-relative border rounded py-1 px-3 d-none d-md-block mb-0" style="background-color: white; color: #033143; margin-right: 15px;"><i class="fa fa-user m-1 me-md-2" style="color: #033143; cursor: pointer; font-size: 1.2rem;"></i>
@@ -117,20 +121,20 @@
                       <div class="modal-body">
                         <form>
                           <div class="mb-2">
-                            <label for="recipient-name" class="col-form-label">Email</label>
-                            <input v-model="enteredEmail" type="text" class="form-control" id="recipient-name">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" v-model="enteredEmail" class="form-control">
                           </div>
                           <div class="mb-2">
-                            <label for="message-text" class="col-form-label">Username</label>
-                            <input v-model="enteredUsername" type="text" class="form-control" id="recipient-name">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" v-model="enteredUsername" class="form-control">
                           </div>
                           <div class="mb-2">
-                            <label for="message-text" class="col-form-label">Password</label>
-                            <input v-model="enteredPassword" type="text" class="form-control" id="recipient-name">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" v-model="enteredPassword" class="form-control">
                           </div>
                           <div class="mb-2">
-                            <label for="message-text" class="col-form-label">Confirm Password</label>
-                            <input v-model="enteredConfirmPassword" type="text" class="form-control" id="recipient-name">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" v-model="enteredConfirmPassword" class="form-control">
                           </div>
                         </form>
                       </div>
@@ -248,66 +252,94 @@
               </div>
   
             </div>
+
+
             
 
 
 
 
-
-
-            <div v-show="myCartVisible" :class="{'background-fade': myCartVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
-              <div  class="modal-dialog modal-lg">
+            <div v-show="myCartVisible" :class="{'background-fade': myCartVisible}"  class="modal fade show" id="exampleModalToggle" tabindex="-1" aria-labelledby="exampleModalToggleLabel"  aria-hidden="true" style="display: block;">
+              <div  class="modal-dialog modal-xl">
                 <div  class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: bold; color: #333;">My Cart</h5>
+                    <h5 class="modal-title fs-5" id="exampleModalToggleLabel" style="font-weight: bold; color: #333;">My Cart</h5>
                     <button type="button" class="btn-close" @click="myCartVisible = false" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div class="modal-body" style="max-height: 400px; overflow-y: auto; padding: 20px;">
-                    <div v-for="item in cart" :key="item.id" class="cart-item d-flex justify-content-between align-items-center mb-3 p-3" style="border-bottom: 1px solid #dee2e6;">
-                      <div class="cart-item-image" style="width: 70px; height: 70px; overflow: hidden; margin-right: 15px; border-radius: 8px;">
-                        <img :src="item.images[0]" alt="Product Image" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;">
-                      </div>
-  
-                      <div class="cart-item-details flex-grow-1 d-flex flex-column ">
-                        <h4 class="mb-1" style="font-size: 1.1rem; color: #333; font-weight: bold;">{{ item.title }}</h4>
-  
-                        <div class=" d-flex  mb-3">
-  
-                          <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : {{((item.discountPrice) *  (item.quantity))}}</p></div>
-                          <div>
-                            <span class="text-danger" style="font-size: 1rem;"> 
-                              <s> {{ ((item.price)* (item.quantity)) }}</s>
-                            </span>
+                  <div class="modal-body" style="padding: 18px;">
+                    <div class="row">
+                      <div class="col-md-6 col-sm-12" style="max-height: 400px; overflow-y: auto;" >
+
+                        <div v-for="item in cart" :key="item.id" class="cart-item d-flex justify-content-between align-items-center mb-3 p-3" style="border-bottom: 1px solid #dee2e6;">
+                          <div class="cart-item-image" style="width: 70px; height: 70px; overflow: hidden; margin-right: 15px; border-radius: 8px;">
+                            <img :src="item.images[0]" alt="Product Image" class="img-fluid" style="object-fit: cover; width: 100%; height: 100%;">
                           </div>
-  
-                         
-                        </div>
-                      </div>
-  
-                      <div class="d-flex justify-content-center align-items-center">
-                        <div class="cart-item-quantity" style="text-align: center; margin-right: 14px;">
-                          <label class="mb-2 d-block" style="font-size: 0.9rem;">Quantity</label>
-                          <div class="input-group mb-3" style="width: 150px;">
-                            <button class="btn btn-outline-secondary px-3" type="button" id="button-addon1" @click="cartDecreaseQuantity(item.id)">
-                              <i class="fas fa-minus"></i>
-                            </button>
-  
-                            <input type="text" class="form-control text-center border border-secondary" :value="item.quantity" aria-label="Quantity" aria-describedby="button-addon1" />
-                            <button class="btn btn-outline-secondary px-3" type="button" id="button-addon2" @click="cartIncreaseQuantity(item.id)">
-                              <i class="fas fa-plus"></i>
-                            </button>
+                          <div class="cart-item-details flex-grow-1 d-flex flex-column ">
+                            <h4 class="mb-1" style="font-size: 1.1rem; color: #333; font-weight: bold;">{{ item.title }}</h4>
+                            
+      
+                            <div class=" d-flex  mb-3">
+      
+                              <div><p v-if="item.discountPrice" style="margin-right: 10px; color: #28a745; font-size: 1rem; font-weight: 500;"> Price : ${{((item.discountPrice) *  (item.quantity)).toFixed(2)}}</p></div>
+                              <div>
+                                <span class="text-danger" style="font-size: 1rem;"> 
+                                  <s> ${{ ((item.price)* (item.quantity)).toFixed(2) }}</s>
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-    
-                        <div class="remove-item" style="margin-top: 8px;">
-                          <button @click="removeItem(item.id)" class=" btn btn-danger" style="border-radius: 50%; padding: 4px 9px; border: none;">
-                            <i class="fas fa-trash-alt"></i>
-                          </button>
-                        </div>
+      
+                          <div class="d-flex justify-content-center align-items-center">
+                            <div class="cart-item-quantity" style="text-align: center; margin-right: 14px;">
+                              <label class="mb-2 d-block" style="font-size: 0.9rem;">Quantity</label>
+                              <div class="input-group mb-3" style="width: 150px;">
+                                <button class="btn btn-outline-secondary px-3" type="button" id="button-addon1" @click="cartDecreaseQuantity(item.id)">
+                                  <i class="fas fa-minus"></i>
+                                </button>
+      
+                                <input type="text" class="form-control text-center border border-secondary" :value="item.quantity" aria-label="Quantity" aria-describedby="button-addon1" />
+                                <button class="btn btn-outline-secondary px-3" type="button" id="button-addon2" @click="cartIncreaseQuantity(item.id)">
+                                  <i class="fas fa-plus"></i>
+                                </button>
+                              </div>
+                            </div>
+      
+        
+                            <div class="remove-item" style="margin-top: 8px;">
+                              <button @click="removeItem(item.id)" class=" btn btn-danger" style="border-radius: 50%; padding: 4px 9px; border: none;">
+                                <i class="fas fa-trash-alt"></i>
+                              </button>
+                            </div>
+                          </div>
+                          </div>
                       </div>
+
+                      <div class="col-md-6 col-sm-12">
+                          <div class="addressContainer">
+                            <div class="form-check">
+                              <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                  <p><strong>Deliver to:</strong></p>
+                                </div>
+                                <button class="newAddressBtn btn btn-primary" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#exampleModalToggle2"
+                                    @click="openSelectAddressPage">
+                                    <!-- @click="openAddressPage" -->
+                                    Change
+                                </button>
+                              </div>
+                              <div class="checkAndAdd" v-if="selectedAddress">
+
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                 {{ selectedAddress.flatName }}, {{ selectedAddress.street }}, {{ selectedAddress.landmark }}, {{ selectedAddress.city }}, {{ selectedAddress.state }}, {{ selectedAddress.pincode }}
+                                </label>
+                              </div>
+                            </div>
+                          </div>
                       </div>
-                     
-                    
+                    </div>
                   </div>
                   <div class="modal-footer d-flex justify-content-between">
                     <div class="d-flex flex-column">
@@ -322,17 +354,90 @@
                     </div>
                     <div class="d-flex">
                       <div style="background-color: #f8f9fa; border-top: 2px solid #dee2e6; margin-right: 5px;">
-                        <button type="button" class="checkout btn btn-primary">Proceed to Checkout</button>
+                        <button type="button" class="checkout btn btn-primary" @click="proceedToCheckout">Proceed to Checkout</button>
                       </div>
                       <button type="button" class="btn btn-secondary" @click="myCartVisible = false" data-bs-dismiss="modal">Close</button>
                     </div>
-  
                   </div>
-  
                 </div>
               </div>
             </div>
 
+
+            <div v-show="selectAddressPageVisible" :class="{'background-fade': selectAddressPageVisible}" class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Select Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="selectAddressPageVisible = false"></button>
+                  </div>
+                  <div class="modal-body">
+                     <h6 @click="openAddressPage" style="color: blue; cursor: pointer;"><span style="font-size: 20px;">+</span> Add New Address</h6>
+                     <hr>
+                      <div v-for="(eachAddress, index) in savedAddress" :key="index" class="d-flex">
+
+                        <!-- <input class="form-check-input" type="radio" :name="'flexRadioDefault' + index" :id="'flexRadioDefault' + index" style="margin-right: 10px;"> -->
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2"  :value="eachAddress" v-model="selectedAddress" style="margin-right: 10px;">
+
+                        <label class="form-check-label" :for="'exampleRadios2' + index">
+                          <div>{{ eachAddress.flatName }}, {{ eachAddress.street }}, {{ eachAddress.landmark }}, {{ eachAddress.city }}, {{ eachAddress.state }}, {{ eachAddress.pincode }} </div>
+                         
+                        </label>
+                      </div>
+                      
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="backToCart">Back</button>
+                    <button type="button" class="btn btn-primary" @click="selectAddressToDeliver">Deliver here</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- New Address Form -->
+            <div v-show="addressPageVisible" :class="{'background-fade': addressPageVisible}"  class="modal fade show" id="model2" aria-hidden="true" aria-labelledby="model2" tabindex="-1" style="display: block;">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="model2">Shipping Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="addressPageVisible = false"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form>
+                      <div class="">
+                        <label for="building-name" class="col-form-label" >Flat No/Building Name</label>
+                        <input type="text" v-model="enteredFlatName" class="form-control" id="building-name">
+
+                        <label for="street" class="col-form-label">Street/Road/Locality</label>
+                        <input type="text" v-model="enteredStreet" class="form-control" id="street">
+
+                        <label for="landmark" class="col-form-label">Landmark</label>
+                        <input type="text" v-model="enteredLandmark" class="form-control" id="landmark">
+
+                        <label for="city" class="col-form-label">City</label>
+                        <input type="text" v-model="enteredCity" class="form-control" id="city">
+
+                        <label for="state" class="col-form-label">State</label>
+                        <input type="text" v-model="enteredState" class="form-control" id="state">
+
+                        <label for="pincode" class="col-form-label">Pincode</label>
+                        <input type="number" v-model="enteredPincode" class="form-control" id="pincode">
+
+                       
+                      </div>
+                      
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelAddressForm">Cancel</button>
+                    <button type="button" class="btn btn-primary" @click="submitToSaveAddress">Submit</button>
+                  </div>
+                 
+                </div>
+              </div>
+            </div>
+           
 
           </div>
         </div>
@@ -345,25 +450,37 @@ import {ref, reactive, computed, onMounted} from 'vue';
 import { defineProps, defineEmits } from 'vue';
     export default {
       props: ['updateWishList'],
-      props: ['cart', 'myCartVisible'],
+      props: ['updateCartList', 'myCartVisible'],
         setup(props){
 
           
 
           function closeCart(){
-            this.$emit('updateCart', this.cart); // Optionally pass updated cart back to parent
+            this.$emit('updateCart', this.cart); 
           };
-          const emit = defineEmits();
 
-          const totalWishlistProduct = ref(0)
+          const emit = defineEmits();
+            const currentUsername = ref('guest');
+            const totalWishlistProduct = ref(0)
             const headerInputBoxPath = ref(false);
-            // const totalWishListCount = ref(0);
+            const addressPageVisible = ref(false);
+            const selectAddressPageVisible = ref(false);
+            // const currentUsername = ref([]);
+            const savedAddress = ref([]);
+            const enteredFlatName = ref("");
+            const enteredStreet = ref("");
+            const enteredLandmark = ref("");
+            const enteredCity = ref("");
+            const enteredState= ref("");
+            const enteredPincode = ref("");
+            const selectedAddress = ref(null);
+
             const enteredEmail = ref('');
             const enteredUsername = ref('');
             const enteredPassword = ref('');
             const enteredConfirmPassword = ref('');
-            
-            
+            const totalCartItem = ref(0);
+           
             const isLoggedIn = ref(false);
             
             const showSignLoginModal = ref(false);
@@ -392,7 +509,7 @@ import { defineProps, defineEmits } from 'vue';
             const InputSuggestionProduct = ref([]);
             const placeholder = ref(1);
             const itemToMove = ref(null);
-            const cart = reactive([]);
+            const cart = ref(JSON.parse(localStorage.getItem('cart')) || []);
             const wishList = reactive([]);
             const saveButtonText = ref('Saved')
             const cartButtonText = ref('Add to cart');
@@ -427,7 +544,7 @@ import { defineProps, defineEmits } from 'vue';
 
             
             const totalProductCount = computed(() => {
-                return cart.length;
+                return cart.value.length;
             });
 
             const totalWishListCount = computed(() => {
@@ -438,10 +555,20 @@ import { defineProps, defineEmits } from 'vue';
 
             onMounted(()=>{
                 loadWishList();
+                loadMyCart();
+                checkLoginState();
+                getUsernameFromStorage(); 
                 // saveToWishList(); 
                 checkPath();
                 loadCartFromLocalStorage();
-                
+                const addresses = JSON.parse(localStorage.getItem('savedAddress')) || [];
+                savedAddress.value = addresses;
+
+
+                const savedSelectedAddress = JSON.parse(localStorage.getItem('selectedAddress'));
+                selectedAddress.value = savedSelectedAddress
+  
+              
                 
             });
 
@@ -471,50 +598,313 @@ import { defineProps, defineEmits } from 'vue';
                 }
             }
 
+            const signIn = () => {
+              showSignLoginModal.value = true;
+            }
+
+            const createAccount = () =>{
+              showCreateAccountModal.value = true;
+            }
+
+            const createNewUserAccount = () => {
+              if(enteredEmail.value && enteredUsername.value && enteredPassword.value && enteredConfirmPassword.value){
+                  if(enteredPassword.value === enteredConfirmPassword.value){
+
+                  
+                      let userId = parseInt(localStorage.getItem('eachUserId')) || 0;
+                      userId += 1;
+                      localStorage.setItem('eachUserId', userId);
+
+                      const  newUser = {
+                        userId,
+                        email: enteredEmail.value,
+                        username: enteredUsername.value,
+                        password: enteredPassword.value,
+                          // confirmPassword : this.enteredConfirmPassword
+                      };
+                      const createdUser = JSON.parse(localStorage.getItem('newUser')) || [];
+
+                      const userExist = createdUser.find(user => user.email === enteredEmail.value);
+                      if(userExist){
+                          alert("This email is already registered");
+                          return;
+                      }
+
+                      createdUser.push(newUser);
+                      alert("account created successfully");
+                      localStorage.setItem('newUser', JSON.stringify(createdUser));
+
+                      isLoggedIn.value = true;
+                      currentUsername.value = enteredUsername.value; 
+                      
+                      
+                      localStorage.setItem('currentUsername', currentUsername.value);
+
+                     
+
+                      showCreateAccountModal.value = false;
+                      showSignLoginModal.value = false;
+
+                  }else{
+                      alert("password not matched")
+                  }
+              }else{
+                  alert("fill all the field")
+              }
+              
+            
+            }
+            
+            const getUsernameFromStorage = () => {
+              const storedUsername = localStorage.getItem('currentUsername');
+              currentUsername.value = storedUsername ? storedUsername : 'guest';
+            }
+            
+            const loginUser = () => {
+            
+              const email = enteredEmail.value;
+              const password = enteredPassword.value;
+
+              const createdUser = JSON.parse(localStorage.getItem('newUser')) || [];
+
+              const user = createdUser.find(user => user.email === email);
+              if(user){
+                  if(user.password === password){
+                    
+
+                      localStorage.setItem('currentUsername', user.username);
+                      currentUsername.value = user.username;
+                      isLoggedIn.value = true;
+                      showSignLoginModal.value = false;
+                      alert("login successfully");
+                  }else{
+                      alert("incorrect password!")
+                  }
+              }else{
+                  alert("user not found")
+              }
+            }
+            const signOut = ()=> {
+                currentUsername.value = '';
+                isLoggedIn.value = false;
+                localStorage.removeItem('currentUsername'); 
+                alert("user logged out successfully")
+            }
+
+            const checkLoginState = () => {
+                const storedUsername = localStorage.getItem('currentUsername');
+                if (storedUsername) {
+                    isLoggedIn.value = true;
+                    currentUsername.value = storedUsername;
+                } else {
+                    isLoggedIn.value = false;
+                    currentUsername.value = 'guest';
+                }
+            }
+
+
+
+            const openAddressPage = () => {
+              addressPageVisible.value = true;
+              myCartVisible.value = false;
+              selectAddressPageVisible.value = false;
+
+            }
+
+            const cancelAddressForm = () => {
+              addressPageVisible.value = false;
+              // myCartVisible.value = true;
+              selectAddressPageVisible.value = true;
+
+            }
+
+            const openSelectAddressPage = () => {
+              selectAddressPageVisible.value = true;
+              myCartVisible.value = false;
+            }
+            const backToCart = () => {
+              selectAddressPageVisible.value = false;
+              myCartVisible.value = true;
+            }
+
+
+            const selectAddressToDeliver = () => {
+              console.log("selected address", selectedAddress.value);
+              if(selectedAddress.value){
+                localStorage.setItem('selectedAddress', JSON.stringify(selectedAddress.value));
+              }
+              
+              selectAddressPageVisible.value = false;
+              myCartVisible.value = true;
+            }
+
             const loadWishList = () => {
                 const storedWishList = JSON.parse(localStorage.getItem('wishlist')) || [];
                 wishList.value = storedWishList;
             };
-           
-            // const saveToWishList = (product) => {
-            //     if (!product || !product.price || !product.title || !product.id) {
-            //         console.error("Invalid product object:", product);
-            //         return;
-            //     }
 
-            //     if (isNaN(product.price) || (product.discountPercentage && isNaN(product.discountPercentage))) {
-            //         alert("Invalid price or discount percentage");
-            //         return;
-            //     }
+            const proceedToCheckout = () => {
+              console.log("checkou calling");
+              console.log(selectedAddress.value);
+              
+              
+              if(!isLoggedIn.value){
+                alert("Please log in to proceed with the checkout.");
+                return;
+              }
 
-            //     const discountPrice = product.discountPercentage
-            //         ? (product.price - (product.price * product.discountPercentage / 100)).toFixed(2)
-            //         : product.price.toFixed(2);
+              if(!selectedAddress.value){
+                alert("Please select a delivery address.");
+                return;
 
-            //     const discountPriceNum = parseFloat(discountPrice); 
+              }
+              let orderId = parseInt(localStorage.getItem('orderId')) || [];
 
-            //     const productToAdd = {
-            //         id: product.id,
-            //         title: product.title,
-            //         price: product.price,
-            //         discountPrice: discountPriceNum,
-            //         quantity: 1,  
-            //         images: product.images,
-            //     };
+              orderId += 1;
+              const orderIdFormat = `ORD_${orderId}`;
 
-            //     const existingProduct = wishList.value.find(item => item.id === productToAdd.id);
+              localStorage.setItem('orderId', JSON.stringify(orderId));
+
+              const oderDetails = {
+                orderId : orderIdFormat,
+                userId: localStorage.getItem('eachUserId'),
+                products: cart.value.map((item => ({
+                  id: item.id,
+                  quantity : item.quantity,
+                  title: item.title
+                }))),
+                totalAmount : totalDicountPrice.value,
+                address : selectedAddress.value,
+                date : new Date().toISOString(),
+
+              };
+
+              let orderPlacedData = JSON.parse(localStorage.getItem('orderPlacedData')) || [];
+
+              orderPlacedData.push(oderDetails);
+             
+              localStorage.setItem('orderPlacedData', JSON.stringify(orderPlacedData));
+
+              localStorage.removeItem('cart');
+              cart.value = [];
+
+              alert(`Checkout successful! Your order ID is ${orderIdFormat}`);
+            }
+
+
+
+            const submitToSaveAddress = () =>{
+              const address = {
+                flatName : enteredFlatName.value,
+                street : enteredStreet.value,
+                landmark : enteredLandmark.value,
+                city: enteredCity.value,
+                state: enteredState.value,
+                pincode : enteredPincode.value
+              }
+              let shippingAddress = JSON.parse(localStorage.getItem('savedAddress')) || [];
+              shippingAddress.push(address);
+
+              localStorage.setItem('savedAddress', JSON.stringify(shippingAddress))
+              savedAddress.value = shippingAddress;
+
+              alert("Address saved successfully")
+
+              enteredFlatName.value = '';
+              enteredStreet.value = '';
+              enteredLandmark.value = '';
+              enteredCity.value = '';
+              enteredState.value = '';
+              enteredPincode.value = '';
+            }
+
+
+            const loadMyCart = () => {
+              const storedMyCart = JSON.parse(localStorage.getItem('cart')) || [];
+              cart.value = storedMyCart;
+            }
+
+            const removeItem = (itemId) => {
+                const updatedCart = cart.value.filter(item => item.id !== itemId);
+                cartButtonText.value = 'Add to cart';
+                cart.value = updatedCart;
+
+                localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+            };
+
+            // const addToCart = () => {
+            //   totalCartItem.value++;
+            //   console.log("cart calling");
+              
+            //   if (productInfo.value) {
+            //     let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            //     const existingProduct = cart.find(item => item.id === productInfo.value.id);
+
             //     if (!existingProduct) {
-            //         wishList.value.push(productToAdd);
-            //         localStorage.setItem('wishlist', JSON.stringify(wishList.value));
+            //       const discountPrice = (productInfo.value.price - (productInfo.value.price * productInfo.value.discountPercentage / 100)).toFixed(2);
+            //       const cartItem = {
+            //         id: productInfo.value.id,
+            //         title: productInfo.value.title,
+            //         images: productInfo.value.images,
+            //         discountPrice: discountPrice,
+            //         price: productInfo.value.price,
+            //         quantity: placeholder.value
+            //       };
+
+            //       cart.push(cartItem);
+            //       console.log("discount price", productInfo.value.discountPrice);
+            //       console.log("image", productInfo.value.images);
+                  
+            //       localStorage.setItem('cart', JSON.stringify(cart));
+            //       cart.value = cart;
+                  
+
+            //     } else {
+            //       existingProduct.quantity = placeholder.value;
             //     }
+
+            //     // calculateTotalDiscountPrice(cart);
+                
+
+            //     checkProductInCartForAdded();
+            //   }
             // };
 
+            const cartIncreaseQuantity = (itemId) => {
+                const item = cart.value.find(item => item.id === itemId);
+                if (item) {
+                    item.quantity++;
+                    saveToLocalStorage();
+                }
+            };
+            
+            const cartDecreaseQuantity = (itemId) => {
+                const item = cart.value.find(item => item.id === itemId);
+                if (item && item.quantity > 1) {
+                    item.quantity--;
+                    saveToLocalStorage();
+                }
+            };
+            const saveToLocalStorage = () => {
+                localStorage.setItem('cart', JSON.stringify(cart.value));
+                localStorage.setItem('wishList', JSON.stringify(wishList.value));
+            };
 
-           
 
 
             const showMyCart = () => {
-                myCartVisible.value = !myCartVisible.value;
+              console.log("show my cart");
+            
+              myCartVisible.value = !myCartVisible.value;
+
+              // const modalCart = new bootstrap.Modal(document.getElementById('exampleModalToggle'));
+              // if (myCartVisible.value) {
+              //     modalCart.show();
+              // } else {
+              //     modalCart.hide();
+              // }
             };
 
             const showMyWishList = () => {
@@ -552,12 +942,81 @@ import { defineProps, defineEmits } from 'vue';
                 
             };
 
-            // defineExpose({
-            //     removeItemFromWishList
-            // });
-                
+
+            
+
+
+           
+
+            // Calculate total discount price
+            const calculateTotalDiscountPrice = (cart) => {
+              totalDicountPrice.value = cart.reduce(
+                (acc, item) => acc + (item.discountPrice * item.quantity),
+                0
+              );
+            };
+
+
             const moveToCart = (item) => {
-                removeItemFromWishList(item.id); 
+              console.log("move to cart calling");
+              
+                // removeItemFromWishList(item.id); 
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let wishList = JSON.parse(localStorage.getItem('wishList')) || [];
+
+                const existingProductInCart = cart.find(cartItem => cartItem.id === item.id);
+                if(existingProductInCart){
+                    showAlertModal.value = true;
+                    modalMessage.value = "This product is already in the cart, Do you want to update it"
+
+                    itemToMove.value = item;
+                  
+                }else{
+                    cart.push(item);
+                    wishList = wishList.filter(wishListItem => wishListItem.id !== item.id);
+                    isInWishList.value = false;
+                    cartButtonText.value = "Added";
+
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    localStorage.setItem('wishList', JSON.stringify(wishList));
+
+                    cart.value = cart;
+                    wishList.value = wishList;
+
+                    
+                }  
+            };
+
+            const confirmMoveToCart =  () => {
+
+              const cart = JSON.parse(localStorage.getItem('cart')) || [];
+              let wishList = JSON.parse(localStorage.getItem('wishList')) || [];
+
+              const item = itemToMove.value;  
+              console.log("s", item);
+
+              const existingProductInCart = cart.find(cartItem => cartItem.id === item.id);
+
+              if (existingProductInCart) {
+
+                  existingProductInCart.quantity = item.quantity;
+                  wishList = wishList.filter(wishListItem => wishListItem.id !== item.id);
+
+                  localStorage.setItem('cart', JSON.stringify(cart));
+                  localStorage.setItem('wishList', JSON.stringify(wishList));
+
+                  cart.value = cart;
+                  wishList.value = wishList;
+
+                  isInWishList.value = false;
+                  cartButtonText.value = "Added";
+
+                  showAlertModal.value = false;
+
+              } else {
+                  showAlertModal.value = false;
+              }
             };
                     
             const checkProductInWishList = () => {
@@ -598,7 +1057,6 @@ import { defineProps, defineEmits } from 'vue';
                 const wishListData = JSON.parse(localStorage.getItem('wishList')) || [];
 
                 if (wishListData.length > 0) {
-                    // wishList.value = wishListData;  
                     wishList.splice(0, wishList.length, ...wishListData);
 
                     console.log("wishlistData:", wishList.value);
@@ -611,8 +1069,8 @@ import { defineProps, defineEmits } from 'vue';
 
 
             return{
-              saveButtonText, props, totalWishListCount, totalWishlistProduct, wishList, totalWishListCount, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
-                myCartVisible, closeCart, removeItemFromWishList,loadCartFromLocalStorage, fetchProductDetails, wishListDecreaseQuantity,  wishListIncreaseQuantity, moveToCart
+              signIn, proceedToCheckout, getUsernameFromStorage, loginUser, signOut, isLoggedIn, checkLoginState, currentUsername, createAccount, showCreateAccountModal,  enteredEmail, enteredUsername, enteredPassword, enteredConfirmPassword, showSignLoginModal, createNewUserAccount, saveButtonText, showAlertModal, modalMessage, isInWishList, wishList, calculateTotalDiscountPrice, props, totalWishListCount, totalWishlistProduct, wishList, headerInputBoxPath, showMyCart, showMyWishList, myWishListVisible, totalProductCount, totalPrice, totalDicountPrice, cartItemCount,
+              submitToSaveAddress,selectAddressToDeliver, selectedAddress,  savedAddress, enteredFlatName, enteredPincode, enteredState, enteredCity, enteredStreet, enteredLandmark, myCartVisible, openAddressPage, addressPageVisible, cancelAddressForm, selectAddressPageVisible, openSelectAddressPage, backToCart,  confirmMoveToCart,  cart, closeCart, cartIncreaseQuantity, cartDecreaseQuantity, removeItemFromWishList, removeItem, loadCartFromLocalStorage, fetchProductDetails, wishListDecreaseQuantity,  wishListIncreaseQuantity, moveToCart
             }
         }
     }
@@ -627,12 +1085,31 @@ import { defineProps, defineEmits } from 'vue';
   left: 0 !important;
   right: 0 !important;
   z-index: 10 !important; 
-  background-color: white !important;
+  background-color: rgb(255, 253, 253) !important;
   width: 100% !important;
 }
 
 .background-fade {
-  background-color: rgba(65, 65, 65, 0.513); /* Semi-transparent */
+  background-color: rgba(65, 65, 65, 0.513); 
   transition: background-color 0.3s ease;
+}
+
+.form-check{
+  width: 500px;
+  border: 1px solid rgb(241, 241, 241);
+  margin-left: 20px;
+  word-wrap: none;
+  padding: 10px;
+}
+.checkAndAdd{
+  margin-left: 20px;
+}
+.newAddressBtn{
+  border: 1px solid rgb(223, 218, 218) !important;
+  background-color: white !important;
+  color: #0d6efd !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  padding: 4px 10px !important;
 }
 </style>

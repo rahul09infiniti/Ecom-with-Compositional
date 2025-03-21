@@ -4,7 +4,7 @@
 
       <page-header :key="totalWishlistProduct"></page-header>
 
-      <div v-show="myWishListVisible" :class="{'background-fade': myWishListVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
+      <!-- <div v-show="myWishListVisible" :class="{'background-fade': myWishListVisible}"  class="background-overlay modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
               <div  class="modal-dialog modal-lg">
                 <div  class="modal-content">
                   <div class="modal-header">
@@ -57,7 +57,7 @@
                       </div>
                   </div>
   
-                <!-- Alert Modal -->
+               
   
                   <div v-show="showAlertModal" :class="{'background-fade': showAlertModal}" class="modal fade show" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
                     <div class="modal-dialog modal-dialog-centered">
@@ -86,7 +86,7 @@
                 </div>
               </div>
   
-            </div>
+      </div> -->
       <main>
 
 
@@ -231,7 +231,7 @@
                           <!-- Actions Section (Buttons to the right) -->
     
                             <div class="d-flex flex-column mt-4">
-                              <button @click="goToProductDetails(product.id)" class="btn btn-primary btn-sm" type="button" style="background-color: #04a9f5; border: none;">Details</button>
+                              <button @click="goToProductDetails(product.id, product.title)" class="btn btn-primary btn-sm" type="button" style="background-color: #04a9f5; border: none;">Details</button>
                               <button @click="saveToWishList(product)" class="wishlist-btn btn btn-outline-primary btn-sm mt-2" type="button">{{wishListButtonText}}</button>
                             </div>
 
@@ -321,6 +321,8 @@ import Footer from '../components/Footer.vue'
 
       },
       setup() {
+        const totalVisitCount = ref([]);
+        const visitCount = ref(0);
         const totalWishlistProduct = ref(0);
           const enteredEmail = ref('');
           const enteredUsername = ref('');
@@ -332,6 +334,7 @@ import Footer from '../components/Footer.vue'
           const showSignLoginModal = ref(false);
           const showCreateAccountModal = ref(false);
           const enteredProductTitle = ref('');
+          const visitedProduct = ref([]);
           const ecommerceData = ref([]);
           const allProductData = ref([]);
           const filteredProducts = ref([]);
@@ -569,45 +572,43 @@ import Footer from '../components/Footer.vue'
             myWishListVisible.value = !myWishListVisible.value;
           };
 
-          const addToCart = () => {
-            if (productInfo.value) {
-              let cart = JSON.parse(localStorage.getItem('cart')) || [];
+          // const addToCart = () => {
+          //   if (productInfo.value) {
+          //     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-              const existingProduct = cart.find(item => item.id === productInfo.value.id);
+          //     const existingProduct = cart.find(item => item.id === productInfo.value.id);
 
-              if (!existingProduct) {
-                const cartItem = {
-                  id: productInfo.value.id,
-                  title: productInfo.value.title,
-                  images: productInfo.value.images,
-                  discountPrice: productInfo.value.discountPrice,
-                  price: productInfo.value.price,
-                  quantity: placeholder.value,
-                };
+          //     if (!existingProduct) {
+          //       const cartItem = {
+          //         id: productInfo.value.id,
+          //         title: productInfo.value.title,
+          //         images: productInfo.value.images,
+          //         discountPrice: productInfo.value.discountPrice,
+          //         price: productInfo.value.price,
+          //         quantity: placeholder.value,
+          //       };
 
-                cart.push(cartItem);
-                // cart.splice(0, cart.length, ...currentCart);
-                cart.value = cart;
-                saveToLocalStorage();
-                checkProductInCartForAdded();
-              } else {
-                existingProduct.quantity = placeholder.value;
-                cart.value = cart;
-                saveToLocalStorage();
-                checkProductInCartForAdded();
-              }
-            }
-          };
+          //       cart.push(cartItem);
+          //       cart.value = cart;
+          //       saveToLocalStorage();
+          //       checkProductInCartForAdded();
+          //     } else {
+          //       existingProduct.quantity = placeholder.value;
+          //       cart.value = cart;
+          //       saveToLocalStorage();
+          //       checkProductInCartForAdded();
+          //     }
+          //   }
+          // };
 
          
 
           // const emit = defineEmits();
+          
           const saveToWishList = (product) => {
             totalWishlistProduct.value++;
-            console.log("calling", product.value);
 
             if (product) {
-                console.log("wishlist product", product.value);
 
                 let wishList = JSON.parse(localStorage.getItem('wishList')) || [];
 
@@ -944,8 +945,42 @@ import Footer from '../components/Footer.vue'
             allProducts();
           };
 
-          const goToProductDetails = (productId) => {
-            window.location.href = `../detail_page/index.html?id=${productId}`;
+          // const calculateTotalVisitCount = () => {
+          //   const visitedProducts = JSON.parse(localStorage.getItem('visitedProduct')) || [];
+          //   const total = visitedProducts.reduce((sum, product) => sum + product.visitCount, 0);
+          //   totalVisitCount.value = total;
+            
+          // };
+
+          const goToProductDetails = (productId, productTitle) => {
+            const visitedProduct = JSON.parse(localStorage.getItem('visitedProduct')) || [];
+            
+           
+            const existProductInVisited = visitedProduct.find(item => item.productId === productId);
+
+            if(!existProductInVisited){
+              const currentDate = new Date().toISOString();
+
+              const visitedProductInfo = {
+                productId : productId,
+                visitCount : 1,
+                productTitle : productTitle,
+                date : currentDate
+              }
+              visitedProduct.push(visitedProductInfo)
+            }else{
+              existProductInVisited.visitCount++;
+            }
+
+            localStorage.setItem('visitedProduct', JSON.stringify(visitedProduct));
+
+            const totalVisitCount = visitedProduct.reduce((total, item) => total + item.visitCount, 0);
+
+            localStorage.setItem('totalVisitCount', totalVisitCount);
+            window.location.href = `../detail_page/detail.php?id=${productId}`;
+            // window.location.href = `../../app_page/detail_page/detail.php?id=${productId}`;
+            
+            
           };
 
 
@@ -953,6 +988,8 @@ import Footer from '../components/Footer.vue'
 
           return {
                 // totalWishListCount,
+                visitedProduct,
+                visitCount,
                 enteredEmail,
                 enteredUsername,
                 enteredPassword,
@@ -1014,7 +1051,6 @@ import Footer from '../components/Footer.vue'
                 saveToLocalStorage,
                 showMyCart,
                 showMyWishList,
-                addToCart,
                 saveToWishList,
                 myWishListVisible,
                 removeItem,
@@ -1038,7 +1074,7 @@ import Footer from '../components/Footer.vue'
                 sortProduct,
                 clearFilters,
                 goToProductDetails,
-
+                totalVisitCount
             };
       }
     }

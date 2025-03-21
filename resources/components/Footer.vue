@@ -10,7 +10,7 @@
                   <!-- Grid column -->
                   <div class="col-12 col-lg-3 col-sm-12 mb-2">
                     <!-- Content -->
-                    <img src="/assests/logo-colored.svg" alt="">
+                    <img src="http://localhost/Ecom-with-Compo_ESM/assests/logo-colored.svg" alt="">
                     <div style="margin-top: 15px;">
                       <p class="mt-1 text-dark">
                         &copy; 2025 copyright : Bizvibe.com
