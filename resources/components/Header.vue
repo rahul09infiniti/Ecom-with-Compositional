@@ -752,18 +752,25 @@ import { defineProps, defineEmits } from 'vue';
                 alert("Please log in to proceed with the checkout.");
                 return;
               }
+              
 
               if(!selectedAddress.value){
                 alert("Please select a delivery address.");
                 return;
 
               }
+
+              // if(cart.length.value === 0){
+              //   alert("Product not in the cart, Please add product in the cart")
+              //   return;
+              // }
+              
               let orderId = parseInt(localStorage.getItem('orderId')) || [];
 
               orderId += 1;
               const orderIdFormat = `ORD_${orderId}`;
 
-              localStorage.setItem('orderId', JSON.stringify(orderId));
+              localStorage.setItem('orderId',  orderId.toString());
 
               const oderDetails = {
                 orderId : orderIdFormat,

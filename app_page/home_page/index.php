@@ -88,6 +88,7 @@
                 "vue": "../../resources/esmodules/vue.3.4.31.esm-browser.js",
                 "vue-sfc-loader": "../../resources/esmodules/vue3-sfc-loader.0.9.5.esm.js",
                 "axios": "../../resources/esmodules/axios/dist/axios.min.js"
+                
             }
         }
     </script>
